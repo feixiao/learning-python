@@ -21,6 +21,7 @@
 
 - [playsound](https://github.com/TaylorSMarks/playsound)
 - [python-fire](https://github.com/google/python-fire/)
+- [gitignore](https://github.com/github/gitignore)
 
 #### 资料
 
