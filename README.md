@@ -15,7 +15,24 @@
   pip install -r requirements.txt
   ```
 
-- [virtualenv](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480) 用来为一个应用创建一套“隔离”的 Python 运行环境。
+- [Python 环境管理](./Python版本管理.md)
+
+  ```shell
+  # 创建环境
+  conda create --name py310 python=3.10
+  # 安装好后，使用activate激活某个环境
+  activate py310
+  # 返回主环境
+  deactivate py310
+  # 查看环境
+  conda info -e
+  # 删除环境
+  conda remove --name py310 --all
+
+  # 对虚拟环境中安装额外的包
+  conda install -n env_name [package]  # 未激活环境
+  conda install [package]  # 如果已经激活环境
+  ```
 
 #### 三方库
 
@@ -29,3 +46,4 @@
 - [《Python 高级编程（第二版）》](https://book.douban.com/subject/27133480/)
 - [《Python 资源大全中文版》](https://github.com/jobbole/awesome-python-cn)
 - [《awesome-python》](https://awesome-python.com/)
+- [《Conda 使用教程》](https://zhuanlan.zhihu.com/p/483716942)
