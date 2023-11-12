@@ -34,6 +34,11 @@
   conda install [package]  # 如果已经激活环境
   ```
 
+#### Python 高级编程
+
+- [PythonAdvanced](https://github.com/feixiao/PythonAdvanced)
+- [Expert-Python-Programming](https://github.com/feixiao/Expert-Python-Programming-Third-Edition)
+
 #### 三方库
 
 - [playsound](https://github.com/TaylorSMarks/playsound)
