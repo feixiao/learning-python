@@ -27,7 +27,7 @@ def process_frame(video_path, start_frame, end_frame, output_list, lock):
             f"{time.ctime()} Thread {start_frame}: Timestamp - {timestamp}")
 
         # 设置视频流的位置，直接跳过一些帧
-        cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) + 20)
+        cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) + 60)
 
         if cap.get(cv2.CAP_PROP_POS_FRAMES) >= end_frame:
             break
