@@ -4,6 +4,7 @@ import argparse
 import logging
 import threading
 import time
+from time import sleep
 
 
 def process_frame(video_path, start_frame, end_frame, output_list, lock):
@@ -25,6 +26,9 @@ def process_frame(video_path, start_frame, end_frame, output_list, lock):
         timestamp = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
         thread_output.append(
             f"{time.ctime()} Thread {start_frame}: Timestamp - {timestamp}")
+
+        # 模拟处理帧的过程，越慢多线程优势越明显
+        sleep(5)
 
         # 设置视频流的位置，直接跳过一些帧
         cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) + 20)
@@ -71,8 +75,8 @@ def main(video_path, num_threads):
         logging.info("All threads completed.")
         # logging.info(f"Output list: {output_list.size()}")
         # 打印所有线程的输出
-        for output in output_list:
-            print(output)
+        # for output in output_list:
+        #     print(output)
 
     cap.release()
     cv2.destroyAllWindows()
