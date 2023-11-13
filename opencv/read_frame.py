@@ -14,7 +14,8 @@ def process_frame(video_path, start_frame, end_frame, output_list, lock):
     thread_output = []  # 用于存储每个线程的输出
 
     cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
-    for frame_number in range(start_frame, end_frame):
+
+    for _ in range(start_frame, end_frame):
         # 获取帧
         ret, _ = cap.read()
         if ret is False:
@@ -23,10 +24,13 @@ def process_frame(video_path, start_frame, end_frame, output_list, lock):
         # 获取时间戳
         timestamp = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
         thread_output.append(
-            f"{time.ctime()} Thread {frame_number}: Timestamp - {timestamp}")
+            f"{time.ctime()} Thread {start_frame}: Timestamp - {timestamp}")
 
         # 设置视频流的位置，直接跳过一些帧
         cap.set(cv2.CAP_PROP_POS_FRAMES, cap.get(cv2.CAP_PROP_POS_FRAMES) + 20)
+
+        if cap.get(cv2.CAP_PROP_POS_FRAMES) >= end_frame:
+            break
 
     # 将每个线程的输出添加到共享的列表中
     # 使用锁确保对共享列表的安全访问
@@ -72,6 +76,7 @@ def main(video_path, num_threads):
     cv2.destroyAllWindows()
 
 
+# python3 read_frame.py /Users/frank/Movies/out.mp4 --num_threads 4
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
