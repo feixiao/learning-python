@@ -14,8 +14,6 @@ def process_segment(segment, keyword):
     return result
 
 # 这个函数接受文件名、线程数量和关键字作为参数。首先，它读取文件内容，然后将文件内容分成N段，其中N是线程数量。接下来，它创建一个线程池，每个线程处理一个文本段，并调用process_segment函数来查找关键字。最后，主线程等待所有线程完成，并将结果合并后返回。
-
-
 def analyze_file(filename, num_threads, keyword):
     with open(filename, 'r') as file:
         content = file.read()
@@ -39,8 +37,6 @@ def analyze_file(filename, num_threads, keyword):
     for thread in threads:
         thread.join()
 
-    # 对结果进行排序
-    results.sort()
     return results
 
 
