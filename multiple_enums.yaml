@@ -1,0 +1,6 @@
+value_1: !!python/object/apply:__main__.MyEnum1
+- 1
+value_2: !!python/object/apply:__main__.MyEnum2
+- b
+value_3: !!python/object/apply:__main__.MyEnum1
+- 3
