@@ -1,3 +1,7 @@
+
+from multiprocessing import Manager, Process
+
+import multiprocessing.pool
 import cv2
 import numpy as np
 from collections import Counter
@@ -6,16 +10,42 @@ import argparse
 import os
 import time
 import logging
-from multiprocessing import Process, Manager
+
+
+class NoDaemonProcess(multiprocessing.Process):
+    # make 'daemon' attribute always return False
+    def _get_daemon(self):
+        return False
+
+    def _set_daemon(self, value):
+        pass
+    daemon = property(_get_daemon, _set_daemon)
+
+
+# We sub-class multiprocessing.pool.Pool instead of multiprocessing.Pool
+# because the latter is only a wrapper function, not a proper class.
+class NonDaemonPool(multiprocessing.pool.Pool):
+    def Process(self, *args, **kwds):
+        proc = super(NonDaemonPool, self).Process(*args, **kwds)
+
+        class NonDaemonProcess(proc.__class__):
+            """Monkey-patch process to ensure it is never daemonized"""
+            @property
+            def daemon(self):
+                return False
+
+            @daemon.setter
+            def daemon(self, val):
+                pass
+
+        proc.__class__ = NonDaemonProcess
+        return proc
 
 
 def init_logger():
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s.%(msecs)03d %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-
-
-# Define your functions (save_frame_to_file, analyze_frame, is_bright_color, get_most_common_bright_color, FrameProcessor) here...
 
 
 def save_frame_to_file(frame, output_path):
@@ -58,26 +88,32 @@ def get_most_common_bright_color(frame):
     return most_common_bright_color
 
 
+def init_logger():
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s.%(msecs)03d %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S')
+
+# Define your functions (save_frame_to_file, analyze_frame, is_bright_color, get_most_common_bright_color, FrameProcessor) here...
+
+
 def analyze_frames(video_path, frame_ranges, skip_frames, dump_frames, dump_images):
-    results = Manager().dict()  # Using Manager to share results across processes
 
-    processes = []
+    # 创建进程池
+    pool = NonDaemonPool()
+    tasks = []
     for frame_range in frame_ranges:
-        result_lock = Manager().Lock()
+        # logging.info(f"Processing frame range: {frame_range}")
+        result = pool.apply_async(process_frame_range, args=(
+            video_path, frame_range, skip_frames, dump_frames, dump_images))
+        tasks.append(result)
 
-        # Create and start a process for frame processing
-        process = Process(
-            target=process_frame_range,
-            args=(video_path, frame_range, skip_frames,
-                  results, result_lock, dump_frames, dump_images)
-        )
-        process.start()
+    # results = Manager,
+    # 等待所有子进程任务完成并获取结果
 
-    # Wait for all processes to finish
-    for process in processes:
-        process.join()
+    results = [task.get() for task in tasks]
+    pool.close()
+    pool.join()
 
-    # Sort and print the results
     sorted_results = sorted(results.items(), key=lambda x: x[0])
     for timestamp, color in sorted_results:
         logging.info(
@@ -85,11 +121,14 @@ def analyze_frames(video_path, frame_ranges, skip_frames, dump_frames, dump_imag
         )
 
 
-def process_frame_range(video_path, frame_range, skip_frames, results, lock, dump_frames, dump_images):
-    cap = cv2.VideoCapture(video_path)
+def process_frame_range(video_path, frame_range, skip_frames, dump_frames, dump_images):
     init_logger()
+    cap = cv2.VideoCapture(video_path)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, frame_range[0])
+
+    lock = Manager().Lock()
+    results = []
     for frame_position in range(frame_range[0], frame_range[1] + 1, skip_frames):
-        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_position)
         timestamp = cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
 
         ret, frame = cap.read()
@@ -98,8 +137,7 @@ def process_frame_range(video_path, frame_range, skip_frames, results, lock, dum
             logging.error(
                 f"Error reading frame at position {frame_position}, {timestamp}"
             )
-            cap.release()
-            return
+            return results
 
         most_common_bright_color = get_most_common_bright_color(frame)
 
@@ -122,8 +160,7 @@ def process_frame_range(video_path, frame_range, skip_frames, results, lock, dum
                         "color_images", image_filename)
                     analyze_frame(frame, image_path,
                                   most_common_bright_color)
-
-    cap.release()
+        return results
 
 
 # python3 s4.py /Users/frank/Movies/test_file/视频脚本/超级马力大电影_来到猩猩.mp4 --frame_ranges 0-10 --skip_frames 1
@@ -142,8 +179,9 @@ if __name__ == "__main__":
                         help="Number of frames to skip between processed frames.")
 
     args = parser.parse_args()
+    # multiprocessing.set_start_method('spawn')
 
-    start_time = time.time()  # Record start time
+    start_time = time.time()
     frame_ranges = [list(map(int, fr.split('-'))) for fr in args.frame_ranges]
 
     if args.dump_frames:
@@ -154,7 +192,7 @@ if __name__ == "__main__":
     analyze_frames(args.video_path, frame_ranges,
                    args.skip_frames, args.dump_frames, args.dump_images)
 
-    end_time = time.time()  # Record end time
-    elapsed_time = end_time - start_time  # Calculate total running time
+    end_time = time.time()
+    elapsed_time = end_time - start_time
 
     logging.info(f"Total running time: {elapsed_time:.2f} seconds")

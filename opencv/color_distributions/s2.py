@@ -5,11 +5,19 @@ from PIL import Image
 import argparse
 import threading
 import os
+import time
+import logging
+
+logging.basicConfig(level=logging.INFO,
+                    # filename='new.log',
+                    # filemode='w',
+                    format='%(asctime)s.%(msecs)03d %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 def save_frame_to_file(frame, output_path):
     cv2.imwrite(output_path, frame)
-    print(f"Frame saved to {output_path}")
+    logging.info(f"Frame saved to {output_path}")
 
 
 def analyze_frame(frame, output_image_path, most_common_bright_color):
@@ -17,10 +25,10 @@ def analyze_frame(frame, output_image_path, most_common_bright_color):
         height, width, _ = frame.shape
         image = Image.new("RGB", (width, height), most_common_bright_color)
         image.save(output_image_path)
-        print(f"Most common bright color: {most_common_bright_color}")
-        print(f"Image saved to {output_image_path}")
+        logging.info(f"Most common bright color: {most_common_bright_color}")
+        logging.info(f"Image saved to {output_image_path}")
     else:
-        print("No bright colors found in the frame.")
+        logging.info("No bright colors found in the frame.")
 
 
 def is_bright_color(color):
@@ -70,17 +78,23 @@ class FrameProcessor(threading.Thread):
             ret, frame = self.cap.read()
 
             if not ret:
-                print(
+                logging.error(
                     f"Error reading frame at position {frame_position}, {timestamp}")
                 return
 
+            logging.info(
+                f"{self.getName()} Processing frame at position {frame_position} get_most_common_bright_color")
             # 获取最常见的亮色
             most_common_bright_color = get_most_common_bright_color(frame)
+
+            logging.info(
+                f"{self.getName()} Processing frame at position {frame_position} get_most_common_bright_color done")
 
             if most_common_bright_color is not None:
                 with self.lock:
                     self.results[timestamp] = most_common_bright_color
-                    print(f"Processed frame at position {frame_position}")
+                    logging.info(
+                        f"{self.getName()} Processed frame at position {frame_position}")
 
                     # 保存数据帧
                     if self.dump_frames:
@@ -124,18 +138,21 @@ def analyze_frames(video_path, frame_ranges, skip_frames, dump_frames, dump_imag
     for thread, cap_thread in threads:
         thread.join()
 
-        # 释放每个线程的视频流
-        cap_thread.release()
+    # 释放每个线程的视频流
+    cap_thread.release()
 
     # 按照帧位置排序结果
     sorted_results = sorted(results.items(), key=lambda x: x[0])
 
     # 打印结果
     for timestamp, color in sorted_results:
-        print(f"Timestamp: {timestamp}, Most common bright color: {color}")
+        logging.info(
+            f"Timestamp: {timestamp}, Most common bright color: {color}")
 
 
 # python3 s2.py /Users/frank/Movies/test_file/视频脚本/超级马力大电影_来到猩猩.mp4 --frame_ranges 0-100 200-300 --dump_frames --dump_images
+# python3 s2.py /Users/frank/Movies/test_file/视频脚本/超级马力大电影_来到猩猩.mp4 --frame_ranges 0-10 --skip_frames 1
+# python3 s2.py /Users/frank/Movies/test_file/视频脚本/超级马力大电影_来到猩猩.mp4 --frame_ranges 0-5 6-10 --skip_frames 1
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Process video frames and analyze RGB values using multiple threads.")
@@ -151,6 +168,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    start_time = time.time()  # 记录开始时间
     # 解析帧区间
     frame_ranges = [list(map(int, fr.split('-'))) for fr in args.frame_ranges]
 
@@ -162,3 +180,8 @@ if __name__ == "__main__":
 
     analyze_frames(args.video_path, frame_ranges,
                    args.skip_frames, args.dump_frames, args.dump_images)
+
+    end_time = time.time()  # 记录结束时间
+    elapsed_time = end_time - start_time  # 计算总运行时间
+
+    logging.info(f"Total running time: {elapsed_time:.2f} seconds")

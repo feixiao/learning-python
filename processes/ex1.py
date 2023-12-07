@@ -14,7 +14,7 @@ def task_function(task_id):
     # 这里可以编写具体的任务逻辑
     time.sleep(1)  # 模拟任务执行时间
     result = f"Result for Task {task_id}"
-    logging.info(result)
+    logging.ino
     return result
 
 # 主进程函数，负责派发任务和整理结果

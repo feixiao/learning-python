@@ -60,13 +60,6 @@ data.append(enum_dict)
 data.append(enum_dict1)
 
 
-def represent_myclass(dumper, data):
-    return dumper.represent_mapping('tag:yaml.org,2002:map', {
-        'name': data.name,
-        'data': data.data
-    })
-
-
 class MyClass:
     def __init__(self, name, data):
         self.name = name
@@ -92,8 +85,6 @@ class MySafeDumper(yaml.SafeDumper):
             return self.represent_data(data.value)
         return super().represent_data(data)
 
-
-MySafeDumper.add_representer(MyClass, represent_myclass)
 
 # 将字典中的枚举值转储为 YAML 文件
 # with open('multiple_enums.yaml', 'w') as file:
