@@ -21,9 +21,9 @@
   # 创建环境
   conda create --name py310 python=3.10
   # 安装好后，使用activate激活某个环境
-  activate py310
+  conda activate py310
   # 返回主环境
-  deactivate py310
+  conda deactivate py310
   # 查看环境
   conda info -e
   # 删除环境
