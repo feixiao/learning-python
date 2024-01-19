@@ -41,15 +41,9 @@ def generate_color_blocks(rgb_colors, output_file):
     plt.savefig(output_file, bbox_inches='tight', pad_inches=0)
 
 
-if __name__ == "__main__":
-
-    filepath = "data/0:0:33.jpg"
+def get_color_palette(filepath):
     np.random.seed(0)
     img = imread(filepath)
-
-    # Show image
-    plt.axis('off')
-    plt.imshow(img)
 
     img = resize(img, (200, 200))
     data = pd.DataFrame(img.reshape(-1, 3),
@@ -57,7 +51,6 @@ if __name__ == "__main__":
 
     kmeans = KMeans(n_clusters=5,
                     random_state=0)
-
     # Fit and assign clusters
     data['Cluster'] = kmeans.fit_predict(data)
 
@@ -69,13 +62,51 @@ if __name__ == "__main__":
 
     colors = []
     for color in palette_list:
-        color_hex = to_hex(color[0][0])
-        print(color_hex)
-        # plt.figure(figsize=(1, 1))
-        # plt.axis('off')
-        # plt.imshow(color)
-        # plt.show()
-        # print(to_rgb(color[0][0]))
         tmp = to_rgb(color[0][0])
-        colors.append((255 * tmp[0], 255 * tmp[1], 255 * tmp[2]))
+        r = int(255 * tmp[0])
+        g = int(255 * tmp[1])
+        b = int(255 * tmp[2])
+        colors.append((r, g, b))
+
+    return colors[0], colors
+
+
+if __name__ == "__main__":
+
+    filepath = "data/0:1:23.jpg"
+    # np.random.seed(0)
+    # img = imread(filepath)
+
+    # # Show image
+    # plt.axis('off')
+    # plt.imshow(img)
+
+    # img = resize(img, (200, 200))
+    # data = pd.DataFrame(img.reshape(-1, 3),
+    #                     columns=['R', 'G', 'B'])
+
+    # kmeans = KMeans(n_clusters=5,
+    #                 random_state=0)
+
+    # # Fit and assign clusters
+    # data['Cluster'] = kmeans.fit_predict(data)
+
+    # palette = kmeans.cluster_centers_
+
+    # palette_list = list()
+    # for color in palette:
+    #     palette_list.append([[tuple(color)]])
+
+    # colors = []
+    # for color in palette_list:
+    #     color_hex = to_hex(color[0][0])
+    #     print(color_hex)
+    #     # plt.figure(figsize=(1, 1))
+    #     # plt.axis('off')
+    #     # plt.imshow(color)
+    #     # plt.show()
+    #     # print(to_rgb(color[0][0]))
+    #     tmp = to_rgb(color[0][0])
+    #     colors.append((255 * tmp[0], 255 * tmp[1], 255 * tmp[2]))
+    _, colors = get_color_palette(filepath)
     generate_color_blocks(colors, "./data/palette.png")
