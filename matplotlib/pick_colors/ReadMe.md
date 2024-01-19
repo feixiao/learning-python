@@ -6,6 +6,8 @@
 conda create --name pick_colors python=3.8
 conda activate pick_colors
 pip3 install numpy matplotlib flask
+pip3 install pandas scikit-image scikit-learn
+pip3 install opencv-python
 python3 app.py
 ```
 
