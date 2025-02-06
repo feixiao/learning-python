@@ -39,8 +39,8 @@
 - [PythonAdvanced](https://github.com/feixiao/PythonAdvanced)
 - [Expert-Python-Programming](https://github.com/feixiao/Expert-Python-Programming-Third-Edition)
 - [《Python 最佳实践指南》](https://github.com/prodesire/python-guide-cn) Python 最佳实践指南
-- [samplemod](https://github.com/navdeep-G/samplemod) 项目结构参考
-
+- [samplemod](https://github.com/navdeep-G/samplemod) 模块项目结构参考
+- [poetry](https://github.com/python-poetry/poetry) 整体项目结构参考
 #### 三方库
 
 - [playsound](https://github.com/TaylorSMarks/playsound)
