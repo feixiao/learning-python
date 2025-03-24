@@ -35,17 +35,21 @@
   ```
 
 #### Python 高级编程
-
 - [PythonAdvanced](https://github.com/feixiao/PythonAdvanced)
 - [Expert-Python-Programming](https://github.com/feixiao/Expert-Python-Programming-Third-Edition)
 - [《Python 最佳实践指南》](https://github.com/prodesire/python-guide-cn) Python 最佳实践指南
 - [samplemod](https://github.com/feixiao/samplemod) 模块项目结构参考
 - [poetry](https://github.com/python-poetry/poetry) 整体项目结构参考
-#### 三方库
 
+#### 三方库
 - [playsound](https://github.com/TaylorSMarks/playsound)
 - [python-fire](https://github.com/google/python-fire/)
 - [gitignore](https://github.com/github/gitignore)
+
+#### Python和C/C++ 交互
+底层控制的核心在于绕过Python解释器的常规机制，直接操作内存、线程、系统资源等。推荐优先使用PyBind11简化开发，但在需要极致性能或直接操作系统时，需结合Python/C API或ctypes实现精细控制。
+
++ [《pybind11_examples》](https://github.com/feixiao/pybind11_examples)  Examples for the usage of "pybind11"
 
 #### 资料
 
