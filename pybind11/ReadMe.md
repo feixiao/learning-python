@@ -15,5 +15,5 @@ pip install pybind11==2.10.1
 #### 编译
 ```shell
 # -undefined dynamic_lookup -arch x86_64
-g++ -O3 -Wall -shared -std=c++11 -arch x86_64 -fPIC -undefined dynamic_lookup $(python3 -m pybind11 --includes) pybind11_sum.cpp -o pybind11_sum$(python3-config --extension-suffix) 
+g++ -O3 -Wall -shared -std=c++11 -fPIC -undefined dynamic_lookup $(python3 -m pybind11 --includes) pybind11_sum.cpp -o pybind11_sum$(python3-config --extension-suffix) 
 ```
