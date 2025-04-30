@@ -22,7 +22,12 @@ pip install ./cmake_example
 With the `setup.py` file included in this example, the `pip install` command will
 invoke CMake and build the pybind11 module as specified in `CMakeLists.txt`.
 
+#### build wsl file
+```bash
+pip install setuptools wheel
 
+python setup.py bdist_wheel
+```
 
 ## Building the documentation
 
