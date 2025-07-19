@@ -6,6 +6,10 @@
 ```shell
 brew install pyenv
 brew install pyenv-virtualenv
+
+echo 'export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"' >> ~/.zshrc
+echo 'export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1' >> ~/.zshrc
+
 ```
 
 #### WSL2
@@ -46,8 +50,7 @@ pip install pyenv-win --target $HOME\.pyenv
 # windows只有python，linux版本python的生态比较丰富
 pyenv versions
 
- export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"
- export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1
+
 # 查看可以安装的版本
 pyenv install -l
 pyenv install 3.12.0
