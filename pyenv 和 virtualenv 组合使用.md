@@ -15,6 +15,10 @@ echo 'export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1' >> ~/.zshrc
 #### WSL2
 
 ```shell
+
+# 安装依赖
+sudo apt-get update; sudo apt-get install -y --no-install-recommends make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+
 git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 
 # 配置
@@ -23,14 +27,12 @@ echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.
 echo 'eval "$(pyenv init -)"' >> ~/.zshrc
 
 # pyenv-virtualenv
-git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins pyenv-virtualenv
-
+git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
 echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshrc
 
-# 安装依赖
-sudo apt-get update; sudo apt-get install -y --no-install-recommends make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
-
+echo 'export PYTHON_BUILD_MIRROR_URL="https://registry.npmmirror.com/-/binary/python"' >> ~/.zshrc
+echo 'export PYTHON_BUILD_MIRROR_URL_SKIP_CHECKSUM=1' >> ~/.zshrc
 ```
 
 #### Window 10
@@ -55,16 +57,16 @@ pyenv versions
 pyenv install -l
 pyenv install 3.12.0
 
-# 就是从 https://npm.taobao.org/mirrors/python/ 上下载对应版本的 Python，放入到 ~/.pyenv/cache 目录里面，然后使用 pyenv install $v 即可
-export v=3.12.0; wget https://npm.taobao.org/mirrors/python/$v/Python-$v.tar.xz -P ~/.pyenv/cache/; pyenv install $v
-
 # 指定系统版本
 pyenv global 3.12.0
-
 
 # 以 3.8.12 建立虚拟环境
 pyenv virtualenv 3.8.12 luffy
 pyenv activate luffy
 pyenv deactivate luffy
 pyenv uninstall luffy
+
+
+pip freeze > requirements.txt
+pip install -r requirements.txt
 ```
