@@ -1,0 +1,4 @@
+requests>=2.31.0
+# 可选：仅在需要对应模式时再安装
+# selenium>=4.25.0
+# playwright>=1.49.0
