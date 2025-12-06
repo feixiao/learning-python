@@ -6,6 +6,14 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 echo "export PATH=\"\$PATH:\$HOME/.local/bin\"" >> ~/.zshrc
+
+# 配置中国源
+mkdir ~/.config/uv && vim ~/.config/uv/uv.toml
+
+# 写入
+[[index]]
+url = "https://pypi.mirrors.ustc.edu.cn/simple/"
+default = true
 ```
 
 #### 初始化项目
@@ -48,8 +56,18 @@ uv sync --clean
 # 列出可用的Python安装版本
 uv python list 
 
+uv python install 3.10 3.11 3.12
 uv python install 3.10  pypy@3.10
 
+
+# 当前环境指定版本
+uv python pin 3.11
+
+# 创建虚拟环境
+uv venv 
+
+# 下载
+uv pip sync docs/requirements.txt
 ```
 
 #### 参考资料

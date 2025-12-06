@@ -1,5 +1,6 @@
 ## pyenv 和 virtualenv 组合使用
 
+推荐[uv](./uv.md)来管理Python版本和虚拟环境, 不需要往下看了
 
 ### 安装
 #### OSX
